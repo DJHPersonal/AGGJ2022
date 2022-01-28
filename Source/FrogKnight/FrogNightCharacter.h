@@ -32,6 +32,9 @@ private:
 	void MoveForward(float Value);
 	void Turn(float Value);
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+		float TurnSpeed;
+
 	ACameraActor* CameraActor;
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	FVector CameraOffsetLocation;

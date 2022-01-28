@@ -13,7 +13,7 @@ AFrogNightCharacter::AFrogNightCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//AutoPossessPlayer = EAutoReceiveInput::Player0;
+	TurnSpeed = 1;
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +43,8 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AFrogNightCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AFrogNightCharacter::Turn);
+
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFrogNightCharacter::Jump);
 }
 
 void AFrogNightCharacter::MoveForward(float Value)
@@ -52,7 +54,7 @@ void AFrogNightCharacter::MoveForward(float Value)
 
 void AFrogNightCharacter::Turn(float Value)
 {
-	AddControllerYawInput(Value);
+	AddControllerYawInput(Value * TurnSpeed);
 }
 
 
@@ -72,5 +74,5 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 
 float AFrogNightCharacter::EasingIn(float Value)
 {
-	return FMath::Pow(Value, 2);
+	return FMath::Pow(Value, 1.75);
 }
