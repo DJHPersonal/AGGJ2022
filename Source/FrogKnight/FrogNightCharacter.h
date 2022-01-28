@@ -40,5 +40,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float CameraMoveSpeed;
 
+	float EasingIn(float Value);
+
 	void MoveCamera(float DeltaTime);
 };

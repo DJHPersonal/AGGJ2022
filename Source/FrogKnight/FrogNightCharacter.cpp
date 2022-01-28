@@ -5,6 +5,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AFrogNightCharacter::AFrogNightCharacter()
@@ -54,14 +55,22 @@ void AFrogNightCharacter::Turn(float Value)
 	AddControllerYawInput(Value);
 }
 
+
+
 void AFrogNightCharacter::MoveCamera(float DeltaTime)
 {
 	if (CameraActor)
 	{
 		FVector DesiredLocation = GetActorLocation() + CameraOffsetLocation;
 		FVector CameraLocation = CameraActor->GetActorLocation();
-		FVector DirectionFromCamera = DesiredLocation - CameraActor->GetActorLocation();
+		FVector DirectionFromCamera = UKismetMathLibrary::Normal(DesiredLocation - CameraActor->GetActorLocation(), 1);
+		float Distance = FVector::Dist(DesiredLocation, CameraLocation) / 100;
 
-		CameraActor->SetActorLocation(CameraLocation + DirectionFromCamera * DeltaTime * CameraMoveSpeed);
+		CameraActor->SetActorLocation(CameraLocation + DirectionFromCamera * DeltaTime * EasingIn(Distance) * CameraMoveSpeed);
 	}
+}
+
+float AFrogNightCharacter::EasingIn(float Value)
+{
+	return FMath::Pow(Value, 2);
 }
