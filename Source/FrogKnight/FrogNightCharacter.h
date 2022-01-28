@@ -31,9 +31,10 @@ public:
 private:
 	void MoveForward(float Value);
 	void Turn(float Value);
+	void Jump() override;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-		float TurnSpeed;
+	float TurnSpeed;
 
 	ACameraActor* CameraActor;
 	UPROPERTY(EditAnywhere, Category = "Camera")

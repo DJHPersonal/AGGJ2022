@@ -49,7 +49,7 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void AFrogNightCharacter::MoveForward(float Value)
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	AddMovementInput(GetActorForwardVector(), Value);	
 }
 
 void AFrogNightCharacter::Turn(float Value)
@@ -57,7 +57,16 @@ void AFrogNightCharacter::Turn(float Value)
 	AddControllerYawInput(Value * TurnSpeed);
 }
 
-
+void AFrogNightCharacter::Jump()
+{
+	Super::Jump();
+	if (bPressedJump && CanJump())
+	{
+		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
+		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
+		UE_LOG(LogTemp, Warning, TEXT("Forward Velocity: %f, %f"), GetActorForwardVector().X, GetActorForwardVector().Y)
+	}
+}
 
 void AFrogNightCharacter::MoveCamera(float DeltaTime)
 {
