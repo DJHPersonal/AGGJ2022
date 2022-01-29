@@ -37,9 +37,7 @@ public:
 private:
 	UMainGameInstance* GameInstance;
 
-
 	//stuff for the player movement
-
 	void MoveForward(float Value);
 	void Strafe(float Value);
 
@@ -50,14 +48,30 @@ private:
 	float MaxMoveSpeed;
 	float CurrentMoveSpeed;
 
+
+
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	ACameraActor* CameraActor;
-	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	//UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FVector CameraOffsetLocation;
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FRotator CameraInitalRotation;	
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	float CameraMoveSpeed;
+
+	float CameraAngleHorizontal;
+	float CameraAngleVertical;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraHorizontalSenstivity;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraVerticalSenstivity;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraDistance;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraLowerBound;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraUpperBound;
+
 
 	float EasingIn(float Value);
 	void MoveCamera(float DeltaTime);
