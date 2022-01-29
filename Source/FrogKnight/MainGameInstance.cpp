@@ -13,6 +13,21 @@ UMainGameInstance::UMainGameInstance(const FObjectInitializer& ObjectInitilize)
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerWidgetObject(TEXT("/Game/UIWidgets/PlayerWidget"));
 	PlayerWidgetClass = PlayerWidgetObject.Class; //get the file location of the widget blueprint class and store it in this variable
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> EmptyHeartObject(TEXT("/Game/UIWidgets/UI_HeartEmpty"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> FullHeartObject(TEXT("/Game/UIWidgets/UI_HeartFull"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> HalfHeartObject(TEXT("/Game/UIWidgets/UI_HeartHalf"));
+	HeartFull = FullHeartObject.Object;
+	HeartHalf = HalfHeartObject.Object;
+	HeartEmpty = EmptyHeartObject.Object;
+
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> EmptyWetObject(TEXT("/Game/UIWidgets/UI_WetEmpty"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> FullWetObject(TEXT("/Game/UIWidgets/UI_WetFull"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> HalfWetObject(TEXT("/Game/UIWidgets/UI_WetHalf"));
+	WetEmpty = EmptyWetObject.Object;
+	WetHalf = HalfWetObject.Object;
+	WetFull = FullWetObject.Object;
 }
 
 void UMainGameInstance::SetupMainMenu()
@@ -39,12 +54,14 @@ void UMainGameInstance::SetupMainMenu()
 void UMainGameInstance::SetupPlayerWidget()
 {
 	if (PlayerWidgetClass)
-		PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass); //spawn in a new widget
+	{
+		PlayerWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerWidgetClass); //spawn in a new widget
+		UE_LOG(LogTemp, Warning, TEXT("Player Widget Added"))
+	}
 
 	if (PlayerWidget) //as exists now, add it to the viewport
 	{
 		PlayerWidget->AddToViewport();
-		UE_LOG(LogTemp, Warning, TEXT("Player Widget Added"))
 	}
 	FInputModeGameOnly InputMode; //gets the mouse to appear on screen and unlock cursor from menu widget
 

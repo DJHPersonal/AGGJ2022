@@ -77,11 +77,18 @@ private:
 	
 	bool bInWater;
 	void UpdateWetness(float UpdateValue);
+	UFUNCTION()
+	void ReduceWetness();
+	UFUNCTION()
+	void AddWetness();
 	void UpdateHealth(float UpdateValue);
 
 	//collision detection
 	UFUNCTION()
-	void OnOverlap(AActor* MyOverlappedActor, AActor* OtherActor); 
+	void BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor); 
 	UFUNCTION()
 	void EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor);
+
+	//timers for the reduction of the wetness
+	FTimerHandle WetnessTimer;
 };
