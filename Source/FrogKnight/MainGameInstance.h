@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "PlayerWidget.h"
 #include "MainGameInstance.generated.h"
 
 /**
@@ -22,4 +23,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetupMainMenu();
+
+	TSubclassOf<UUserWidget> PlayerWidgetClass;
+	UPlayerWidget* PlayerWidget;
+
+	UFUNCTION(BlueprintCallable)
+	void SetupPlayerWidget();
 };
