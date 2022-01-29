@@ -105,6 +105,8 @@ float AFrogNightCharacter::EasingIn(float Value)
 void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
 	Wetness += UpdateValue;
+	GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
+
 	//update ui as well
 
 	if (Wetness <= 0)
