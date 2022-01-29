@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "MainMenuWidget.generated.h"
 
 /**
@@ -16,4 +17,19 @@ class FROGKNIGHT_API UMainMenuWidget : public UUserWidget
 	
 public:
 	virtual bool Initialize() override;
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_Start;
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_Settings_Levels;
+	UPROPERTY(meta = (BindWidget))
+	UButton* Button_Quit;
+
+	UFUNCTION()
+	void OnStartButtonPressed();
+	UFUNCTION()
+	void OnSettingsButtonPressed();
+	UFUNCTION()
+	void OnQuitButtonPressed();
 };
