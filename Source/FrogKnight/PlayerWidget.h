@@ -33,8 +33,8 @@ public:
 	void AddHealth();
 	void RemoveHealth();
 
-	void AddWetness();
-	void RemoveWetness();
+	float AddWetness();
+	float RemoveWetness();
 
 	virtual bool Initialize() override;
 
