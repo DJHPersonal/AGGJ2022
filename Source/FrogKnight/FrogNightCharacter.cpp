@@ -28,7 +28,7 @@ void AFrogNightCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));//FindComponentByClass<ACameraActor>();
+	CameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass()));//FindComponentByClass<ACameraActor>();
 	if (CameraActor)
 	{
 		CameraActor->SetActorRotation(CameraInitalRotation);
@@ -106,6 +106,9 @@ void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
 	Wetness += UpdateValue;
 	GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
+	
+	UE_LOG(LogTemp, Warning, TEXT("Movement Speed: %f, %f"), GetCharacterMovement()->MaxWalkSpeed, Wetness / MaxWetness * MaxMoveSpeed)
+
 
 	//update ui as well
 
