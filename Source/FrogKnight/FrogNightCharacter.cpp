@@ -104,7 +104,7 @@ float AFrogNightCharacter::EasingIn(float Value)
 void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
 	Wetness += UpdateValue;
-	GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
+	//GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
 	
 	UE_LOG(LogTemp, Warning, TEXT("Movement Speed: %f, %f"), GetCharacterMovement()->MaxWalkSpeed, Wetness / MaxWetness * MaxMoveSpeed)
 
