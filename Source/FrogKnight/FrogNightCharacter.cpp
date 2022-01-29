@@ -17,6 +17,9 @@ AFrogNightCharacter::AFrogNightCharacter()
 	MaxMoveSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	CurrentMoveSpeed = MaxMoveSpeed;
 
+	MaxHealth = 100;
+	CurrentHealth = MaxHealth;
+
 	MaxWetness = 100;
 	Wetness = MaxWetness;
 	WetnessReduction = 1;
@@ -106,21 +109,24 @@ float AFrogNightCharacter::EasingIn(float Value)
 void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
 	Wetness += UpdateValue;
+	if (Wetness > 0)
+	{
+		if (GameInstance && GameInstance->PlayerWidget)
+		{
+			GameInstance->PlayerWidget->UpdateWetnessBar(Wetness, MaxWetness);
+		}
+	}
+	else //lose health
+	{
+		UpdateHealth(-GetWorld()->GetDeltaSeconds() * 20);
+	}
+}
+void AFrogNightCharacter::UpdateHealth(float UpdateValue)
+{
+	CurrentHealth += UpdateValue;
 	if (GameInstance && GameInstance->PlayerWidget)
 	{
-		GameInstance->PlayerWidget->UpdateWetnessBar(Wetness, MaxWetness);
-	}
-
-	//GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Movement Speed: %f, %f"), GetCharacterMovement()->MaxWalkSpeed, Wetness / MaxWetness * MaxMoveSpeed)
-
-
-	//update ui as well
-
-	if (Wetness <= 0)
-	{
-		//kill the player
+		GameInstance->PlayerWidget->UpdateHealthBar(CurrentHealth, MaxHealth);
 	}
 }
 

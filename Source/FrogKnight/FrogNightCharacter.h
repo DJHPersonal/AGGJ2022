@@ -60,8 +60,15 @@ private:
 	float Wetness;	
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float WetnessReduction;
+	
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float MaxHealth;
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float CurrentHealth;
+	
 	bool bInWater;
 	void UpdateWetness(float UpdateValue);
+	void UpdateHealth(float UpdateValue);
 
 	//collision detection
 	UFUNCTION()
