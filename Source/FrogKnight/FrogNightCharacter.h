@@ -29,22 +29,41 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+
+	//stuff for the player movement
 	void MoveForward(float Value);
 	void Turn(float Value);
 	void Jump() override;
 
-	UPROPERTY(EditAnywhere, Category = "Movement")
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float TurnSpeed;
+	float MaxMoveSpeed;
+	float CurrentMoveSpeed;
 
 	ACameraActor* CameraActor;
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FVector CameraOffsetLocation;
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FRotator CameraInitalRotation;	
-	UPROPERTY(EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	float CameraMoveSpeed;
 
 	float EasingIn(float Value);
-
 	void MoveCamera(float DeltaTime);
+
+	//stuff for the players health
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float MaxWetness;
+	UPROPERTY(VisibleAnywhere, Category = "Player Stats")
+	float Wetness;	
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float WetnessReduction;
+	bool bInWater;
+	void UpdateWetness(float UpdateValue);
+
+	//collision detection
+	UFUNCTION()
+	void OnOverlap(AActor* MyOverlappedActor, AActor* OtherActor); 
+	UFUNCTION()
+	void EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor);
 };

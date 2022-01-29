@@ -14,6 +14,13 @@ AFrogNightCharacter::AFrogNightCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TurnSpeed = 1;
+	MaxMoveSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	CurrentMoveSpeed = MaxMoveSpeed;
+
+	MaxWetness = 100;
+	Wetness = MaxWetness;
+	WetnessReduction = 1;
+	bInWater = false;
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +33,9 @@ void AFrogNightCharacter::BeginPlay()
 	{
 		CameraActor->SetActorRotation(CameraInitalRotation);
 	}
+
+	OnActorBeginOverlap.AddDynamic(this, &AFrogNightCharacter::OnOverlap);
+	OnActorEndOverlap.AddDynamic(this, &AFrogNightCharacter::EndOverlap);
 }
 
 // Called every frame
@@ -34,6 +44,10 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera(DeltaTime);
+	if (!bInWater)
+		UpdateWetness(-DeltaTime * WetnessReduction);
+	else if(Wetness < MaxWetness)
+		UpdateWetness(DeltaTime * WetnessReduction * 4);
 }
 
 // Called to bind functionality to input
@@ -84,4 +98,29 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 float AFrogNightCharacter::EasingIn(float Value)
 {
 	return FMath::Pow(Value, 1.75);
+}
+
+
+
+void AFrogNightCharacter::UpdateWetness(float UpdateValue)
+{
+	Wetness += UpdateValue;
+	//update ui as well
+
+	if (Wetness <= 0)
+	{
+		//kill the player
+	}
+}
+
+void AFrogNightCharacter::OnOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+{
+	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+		bInWater = true;
+}
+
+void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+{
+	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+		bInWater = false;
 }
