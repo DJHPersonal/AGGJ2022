@@ -40,6 +40,7 @@ private:
 	float MaxMoveSpeed;
 	float CurrentMoveSpeed;
 
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	ACameraActor* CameraActor;
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FVector CameraOffsetLocation;
