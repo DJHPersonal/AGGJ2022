@@ -27,8 +27,7 @@ AFrogNightCharacter::AFrogNightCharacter()
 void AFrogNightCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	CameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass()));//FindComponentByClass<ACameraActor>();
+	//CameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));//FindComponentByClass<ACameraActor>();
 	if (CameraActor)
 	{
 		CameraActor->SetActorRotation(CameraInitalRotation);
