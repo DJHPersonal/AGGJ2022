@@ -34,12 +34,12 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetOrientation(float DeltaTime);
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayerColour(float Value);
 private:
 	UMainGameInstance* GameInstance;
 
-
 	//stuff for the player movement
-
 	void MoveForward(float Value);
 	void Strafe(float Value);
 
@@ -50,30 +50,33 @@ private:
 	float MaxMoveSpeed;
 	float CurrentMoveSpeed;
 
+
+
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	ACameraActor* CameraActor;
-	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	//UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FVector CameraOffsetLocation;
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	FRotator CameraInitalRotation;	
 	UPROPERTY(EditAnywhere, Category = "Camera Stats")
 	float CameraMoveSpeed;
 
+	float CameraAngleHorizontal;
+	float CameraAngleVertical;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraHorizontalSenstivity;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraVerticalSenstivity;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraDistance;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraLowerBound;
+	UPROPERTY(EditAnywhere, Category = "Camera Stats")
+	float CameraUpperBound;
+
+
 	float EasingIn(float Value);
 	void MoveCamera(float DeltaTime);
-
-	//stuff for the players health
-	UPROPERTY(EditAnywhere, Category = "Player Stats")
-	float MaxWetness;
-	UPROPERTY(VisibleAnywhere, Category = "Player Stats")
-	float Wetness;	
-	UPROPERTY(EditAnywhere, Category = "Player Stats")
-	float WetnessReduction;
-	
-	UPROPERTY(EditAnywhere, Category = "Player Stats")
-	float MaxHealth;
-	UPROPERTY(EditAnywhere, Category = "Player Stats")
-	float CurrentHealth;
 	
 	bool bInWater;
 	void UpdateWetness(float UpdateValue);
