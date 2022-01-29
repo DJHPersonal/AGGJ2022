@@ -28,14 +28,21 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
+	UPROPERTY(BlueprintReadOnly)
+	FVector MovementDirection;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOrientation(float DeltaTime);
 private:
 	UMainGameInstance* GameInstance;
 
 
 	//stuff for the player movement
+
 	void MoveForward(float Value);
 	void Strafe(float Value);
+
 	void Jump() override;
 
 	float MaxMoveSpeed;

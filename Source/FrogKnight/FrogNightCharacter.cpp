@@ -24,6 +24,8 @@ AFrogNightCharacter::AFrogNightCharacter()
 	Wetness = MaxWetness;
 	WetnessReduction = 1;
 	bInWater = false;
+
+	MovementDirection = FVector(1, 0, 0);
 }
 
 // Called when the game starts or when spawned
@@ -48,6 +50,8 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera(DeltaTime);
+	SetOrientation(DeltaTime);
+
 	if (!bInWater && Wetness > 0)
 		UpdateWetness(-DeltaTime * WetnessReduction);
 	else if(Wetness < MaxWetness)
@@ -65,15 +69,25 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFrogNightCharacter::Jump);
 }
 
-void AFrogNightCharacter::MoveForward(float Value)
+void AFrogNightCharacter::MoveForward(float Value) //setup movement so it works by orienting the character in the  direction of movement
 {
-	AddMovementInput(GetActorForwardVector(), Value);	
+	AddMovementInput(GetActorForwardVector(), Value);
+	MovementDirection.Y = Value;
 }
 
 void AFrogNightCharacter::Strafe(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
+	MovementDirection.X = Value;
 }
+
+//void AFrogNightCharacter::SetOrientation(float DeltaTime)
+//{
+//	//float TargetAngle = FMath::RadiansToDegrees(FMath::Atan2(MovementDirection.X, MovementDirection.Y));
+//	//
+//	////
+//	//SetActorRotation(FRotator(0.0f, TargetAngle, 0.0f));
+//}
 
 void AFrogNightCharacter::Jump()
 {
