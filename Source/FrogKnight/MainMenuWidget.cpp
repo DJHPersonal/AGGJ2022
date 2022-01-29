@@ -20,7 +20,7 @@ bool UMainMenuWidget::Initialize()
 
 void UMainMenuWidget::OnStartButtonPressed()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("TestMap")));
+	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_01_Outside")));
 }
 
 void UMainMenuWidget::OnSettingsButtonPressed()

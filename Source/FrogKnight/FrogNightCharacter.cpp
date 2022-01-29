@@ -55,7 +55,7 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AFrogNightCharacter::MoveForward);
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AFrogNightCharacter::Turn);
+	PlayerInputComponent->BindAxis(TEXT("Strafe"), this, &AFrogNightCharacter::Strafe);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFrogNightCharacter::Jump);
 }
@@ -65,9 +65,9 @@ void AFrogNightCharacter::MoveForward(float Value)
 	AddMovementInput(GetActorForwardVector(), Value);	
 }
 
-void AFrogNightCharacter::Turn(float Value)
+void AFrogNightCharacter::Strafe(float Value)
 {
-	AddControllerYawInput(Value * TurnSpeed);
+	AddMovementInput(GetActorRightVector(), Value);
 }
 
 void AFrogNightCharacter::Jump()

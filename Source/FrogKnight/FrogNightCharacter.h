@@ -32,11 +32,10 @@ private:
 
 	//stuff for the player movement
 	void MoveForward(float Value);
-	void Turn(float Value);
+	void Strafe(float Value);
 	void Jump() override;
 
-	UPROPERTY(EditAnywhere, Category = "Player Stats")
-	float TurnSpeed;
+	int32 ForwardDirection;
 	float MaxMoveSpeed;
 	float CurrentMoveSpeed;
 
