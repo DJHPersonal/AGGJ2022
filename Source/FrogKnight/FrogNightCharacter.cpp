@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlayerWidget.h"
+#include "TimerManager.h"
 
 // Sets default values
 AFrogNightCharacter::AFrogNightCharacter()
@@ -38,10 +39,14 @@ void AFrogNightCharacter::BeginPlay()
 		CameraActor->SetActorRotation(CameraInitalRotation);
 	}
 
-	OnActorBeginOverlap.AddDynamic(this, &AFrogNightCharacter::OnOverlap);
+	OnActorBeginOverlap.AddDynamic(this, &AFrogNightCharacter::BeginOverlap);
 	OnActorEndOverlap.AddDynamic(this, &AFrogNightCharacter::EndOverlap);
 
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(this));
+
+	//setup the reduction timer
+	GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5, true, 5);
+
 }
 
 // Called every frame
@@ -81,14 +86,6 @@ void AFrogNightCharacter::Strafe(float Value)
 	MovementDirection.X = Value;
 }
 
-//void AFrogNightCharacter::SetOrientation(float DeltaTime)
-//{
-//	//float TargetAngle = FMath::RadiansToDegrees(FMath::Atan2(MovementDirection.X, MovementDirection.Y));
-//	//
-//	////
-//	//SetActorRotation(FRotator(0.0f, TargetAngle, 0.0f));
-//}
-
 void AFrogNightCharacter::Jump()
 {
 	Super::Jump();
@@ -97,6 +94,10 @@ void AFrogNightCharacter::Jump()
 		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
 		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
 		UE_LOG(LogTemp, Warning, TEXT("Forward Velocity: %f, %f"), GetActorForwardVector().X, GetActorForwardVector().Y)
+		/*if (GameInstance && GameInstance->PlayerWidget)
+		{
+			Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
+		}*/
 	}
 }
 
@@ -118,16 +119,26 @@ float AFrogNightCharacter::EasingIn(float Value)
 	return FMath::Pow(Value, 1.75);
 }
 
-
+void AFrogNightCharacter::ReduceWetness()
+{
+	Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
+}
+void AFrogNightCharacter::AddWetness()
+{
+	Cast<UPlayerWidget>(GameInstance->PlayerWidget)->AddWetness();
+}
 
 void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
+	//now it should actually be either add one or remove one
+
+
 	Wetness += UpdateValue;
 	if (Wetness > 0)
 	{
 		if (GameInstance && GameInstance->PlayerWidget)
 		{
-			GameInstance->PlayerWidget->UpdateWetnessBar(Wetness, MaxWetness);
+			Cast<UPlayerWidget>(GameInstance->PlayerWidget)->UpdateWetnessBar(Wetness, MaxWetness);
 		}
 	}
 	else //lose health
@@ -140,18 +151,27 @@ void AFrogNightCharacter::UpdateHealth(float UpdateValue)
 	CurrentHealth += UpdateValue;
 	if (GameInstance && GameInstance->PlayerWidget)
 	{
-		GameInstance->PlayerWidget->UpdateHealthBar(CurrentHealth, MaxHealth);
+		Cast<UPlayerWidget>(GameInstance->PlayerWidget)->UpdateHealthBar(CurrentHealth, MaxHealth);
 	}
 }
 
-void AFrogNightCharacter::OnOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
 {
 	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+	{
 		bInWater = true;
+		GetWorldTimerManager().ClearTimer(WetnessTimer);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, 0.5f, true, 0.5f);
+
+	}
 }
 
 void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
 {
 	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+	{
 		bInWater = false;
+		GetWorldTimerManager().ClearTimer(WetnessTimer);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5.0f, true, 5.0f);
+	}
 }
