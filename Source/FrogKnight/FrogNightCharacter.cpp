@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PlayerWidget.h"
 
 // Sets default values
 AFrogNightCharacter::AFrogNightCharacter()
@@ -13,9 +14,11 @@ AFrogNightCharacter::AFrogNightCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	TurnSpeed = 1;
 	MaxMoveSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	CurrentMoveSpeed = MaxMoveSpeed;
+
+	MaxHealth = 100;
+	CurrentHealth = MaxHealth;
 
 	MaxWetness = 100;
 	Wetness = MaxWetness;
@@ -35,6 +38,8 @@ void AFrogNightCharacter::BeginPlay()
 
 	OnActorBeginOverlap.AddDynamic(this, &AFrogNightCharacter::OnOverlap);
 	OnActorEndOverlap.AddDynamic(this, &AFrogNightCharacter::EndOverlap);
+
+	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(this));
 }
 
 // Called every frame
@@ -43,7 +48,7 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera(DeltaTime);
-	if (!bInWater)
+	if (!bInWater && Wetness > 0)
 		UpdateWetness(-DeltaTime * WetnessReduction);
 	else if(Wetness < MaxWetness)
 		UpdateWetness(DeltaTime * WetnessReduction * 4);
@@ -104,16 +109,24 @@ float AFrogNightCharacter::EasingIn(float Value)
 void AFrogNightCharacter::UpdateWetness(float UpdateValue)
 {
 	Wetness += UpdateValue;
-	//GetCharacterMovement()->MaxWalkSpeed = Wetness / MaxWetness * MaxMoveSpeed;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Movement Speed: %f, %f"), GetCharacterMovement()->MaxWalkSpeed, Wetness / MaxWetness * MaxMoveSpeed)
-
-
-	//update ui as well
-
-	if (Wetness <= 0)
+	if (Wetness > 0)
 	{
-		//kill the player
+		if (GameInstance && GameInstance->PlayerWidget)
+		{
+			GameInstance->PlayerWidget->UpdateWetnessBar(Wetness, MaxWetness);
+		}
+	}
+	else //lose health
+	{
+		UpdateHealth(-GetWorld()->GetDeltaSeconds() * 20);
+	}
+}
+void AFrogNightCharacter::UpdateHealth(float UpdateValue)
+{
+	CurrentHealth += UpdateValue;
+	if (GameInstance && GameInstance->PlayerWidget)
+	{
+		GameInstance->PlayerWidget->UpdateHealthBar(CurrentHealth, MaxHealth);
 	}
 }
 

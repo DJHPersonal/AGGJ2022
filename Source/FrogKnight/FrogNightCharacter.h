@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraActor.h"
+#include "MainGameInstance.h"
 
 #include "FrogNightCharacter.generated.h"
 
@@ -29,6 +30,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	UMainGameInstance* GameInstance;
+
 
 	//stuff for the player movement
 	void MoveForward(float Value);
@@ -59,8 +62,15 @@ private:
 	float Wetness;	
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float WetnessReduction;
+	
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float MaxHealth;
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float CurrentHealth;
+	
 	bool bInWater;
 	void UpdateWetness(float UpdateValue);
+	void UpdateHealth(float UpdateValue);
 
 	//collision detection
 	UFUNCTION()
