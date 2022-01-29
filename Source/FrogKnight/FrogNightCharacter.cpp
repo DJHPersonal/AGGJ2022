@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlayerWidget.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+
 
 // Sets default values
 AFrogNightCharacter::AFrogNightCharacter()
@@ -26,6 +29,14 @@ AFrogNightCharacter::AFrogNightCharacter()
 	bInWater = false;
 
 	MovementDirection = FVector(1, 0, 0);
+
+	CameraAngleHorizontal = 0.0f;
+	CameraAngleVertical = 0.0f;
+	CameraHorizontalSenstivity = 1.0f;
+	CameraVerticalSenstivity = 1.0f;
+	CameraDistance = 1000.0f;
+	CameraLowerBound = 10.0f;
+	CameraUpperBound = 40.0f;
 }
 
 // Called when the game starts or when spawned
@@ -104,12 +115,26 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 {
 	if (CameraActor)
 	{
+		//work out camera location (orbit movemnt)
+		float mouseDeltaX, mouseDeltaY;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetInputMouseDelta(mouseDeltaX, mouseDeltaY);
+		UKismetMathLibrary::FMod(CameraAngleHorizontal + mouseDeltaX * CameraHorizontalSenstivity, 360.0f, CameraAngleHorizontal);
+		UKismetMathLibrary::FMod(CameraAngleVertical + mouseDeltaY * CameraVerticalSenstivity, 360.0f, CameraAngleVertical);
+		CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
+		float cameraAngleVerticalRadians = FMath::DegreesToRadians(90.0f - CameraAngleVertical);
+		float cameraAngleHorizontalRadians = FMath::DegreesToRadians(CameraAngleHorizontal);
+		float x = CameraDistance * FMath::Cos(cameraAngleHorizontalRadians) * FMath::Sin(cameraAngleVerticalRadians);
+		float y = CameraDistance * FMath::Sin(cameraAngleHorizontalRadians) * FMath::Sin(cameraAngleVerticalRadians);
+		float z = CameraDistance * FMath::Cos(cameraAngleVerticalRadians);
+		CameraOffsetLocation = FVector(x,y,z);
+		
+		//move camera
 		FVector DesiredLocation = GetActorLocation() + CameraOffsetLocation;
 		FVector CameraLocation = CameraActor->GetActorLocation();
 		FVector DirectionFromCamera = UKismetMathLibrary::Normal(DesiredLocation - CameraActor->GetActorLocation(), 1);
 		float Distance = FVector::Dist(DesiredLocation, CameraLocation) / 100;
-
 		CameraActor->SetActorLocation(CameraLocation + DirectionFromCamera * DeltaTime * EasingIn(Distance) * CameraMoveSpeed);
+		CameraActor->SetActorRotation((GetActorLocation() - CameraActor->GetActorLocation()).Rotation());
 	}
 }
 
