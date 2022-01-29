@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "PlayerWidget.h"
 #include "MainGameInstance.generated.h"
 
 /**
  * 
  */
+
 UCLASS()
 class FROGKNIGHT_API UMainGameInstance : public UGameInstance
 {
@@ -25,8 +25,17 @@ public:
 	void SetupMainMenu();
 
 	TSubclassOf<UUserWidget> PlayerWidgetClass;
-	UPlayerWidget* PlayerWidget;
+	UUserWidget* PlayerWidget;
 
 	UFUNCTION(BlueprintCallable)
 	void SetupPlayerWidget();
+
+	//the various UI textures
+	UTexture2D* WetFull;
+	UTexture2D* WetHalf;
+	UTexture2D* WetEmpty;
+
+	UTexture2D* HeartFull;
+	UTexture2D* HeartHalf;
+	UTexture2D* HeartEmpty;
 };
