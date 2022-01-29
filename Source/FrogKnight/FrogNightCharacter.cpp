@@ -20,12 +20,6 @@ AFrogNightCharacter::AFrogNightCharacter()
 	MaxMoveSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	CurrentMoveSpeed = MaxMoveSpeed;
 
-	MaxHealth = 100;
-	CurrentHealth = MaxHealth;
-
-	MaxWetness = 100;
-	Wetness = MaxWetness;
-	WetnessReduction = 1;
 	bInWater = false;
 
 	MovementDirection = FVector(1, 0, 0);
@@ -66,11 +60,6 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 
 	MoveCamera(DeltaTime);
 	SetOrientation(DeltaTime);
-
-	if (!bInWater && Wetness > 0)
-		UpdateWetness(-DeltaTime * WetnessReduction);
-	else if(Wetness < MaxWetness)
-		UpdateWetness(DeltaTime * WetnessReduction * 4);
 }
 
 // Called to bind functionality to input
@@ -145,38 +134,13 @@ float AFrogNightCharacter::EasingIn(float Value)
 
 void AFrogNightCharacter::ReduceWetness()
 {
-	Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
+	float Value = Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
+	PlayerColour(1 - Value);
 }
 void AFrogNightCharacter::AddWetness()
 {
-	Cast<UPlayerWidget>(GameInstance->PlayerWidget)->AddWetness();
-}
-
-void AFrogNightCharacter::UpdateWetness(float UpdateValue)
-{
-	//now it should actually be either add one or remove one
-
-
-	Wetness += UpdateValue;
-	if (Wetness > 0)
-	{
-		if (GameInstance && GameInstance->PlayerWidget)
-		{
-			Cast<UPlayerWidget>(GameInstance->PlayerWidget)->UpdateWetnessBar(Wetness, MaxWetness);
-		}
-	}
-	else //lose health
-	{
-		UpdateHealth(-GetWorld()->GetDeltaSeconds() * 20);
-	}
-}
-void AFrogNightCharacter::UpdateHealth(float UpdateValue)
-{
-	CurrentHealth += UpdateValue;
-	if (GameInstance && GameInstance->PlayerWidget)
-	{
-		Cast<UPlayerWidget>(GameInstance->PlayerWidget)->UpdateHealthBar(CurrentHealth, MaxHealth);
-	}
+	float Value = Cast<UPlayerWidget>(GameInstance->PlayerWidget)->AddWetness();
+	PlayerColour(1 - Value);
 }
 
 void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
