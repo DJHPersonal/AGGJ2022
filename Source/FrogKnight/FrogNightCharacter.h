@@ -45,6 +45,8 @@ private:
 
 	void Jump() override;
 
+	int32 ForwardDirection;
+	float TurnSpeed;
 	float MaxMoveSpeed;
 	float CurrentMoveSpeed;
 
