@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/ProgressBar.h"
 #include "Components/WrapBox.h"
+#include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "MainGameInstance.h"
 #include "PlayerWidget.generated.h"
@@ -40,15 +40,11 @@ public:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ProgressBar_Wetness;
-
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ProgressBar_Health;
-
-	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Health;
 	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Wetness;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* WarningText;
 
 	TArray<TPair<int32, UImage*>> HealthHearts;
 	TArray<TPair<int32, UImage*>> WetnessDrops;

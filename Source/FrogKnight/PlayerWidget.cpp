@@ -94,6 +94,7 @@ void UPlayerWidget::RemoveHealth()
 float UPlayerWidget::AddWetness()
 {
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	WarningText->SetText(FText::FromString(""));
 
 	TPair<int32, UImage*>& CurrElement = WetnessDrops[CurrWetnessAmount - 1];
 	switch (CurrElement.Key)
@@ -116,6 +117,11 @@ float UPlayerWidget::AddWetness()
 			WetnessDrops[CurrWetnessAmount - 1].Value->SetBrushFromTexture(GameInstance->WetHalf);
 			//update it's UI as well
 		}
+		else
+		{
+			RemoveHealth();
+			WarningText->SetText(FText::FromString("Too Wet"));
+		}
 		break;
 	}
 	return CurrWetnessAmount / (float)MaxWetnessAmount;
@@ -124,6 +130,7 @@ float UPlayerWidget::AddWetness()
 float UPlayerWidget::RemoveWetness()
 {
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	WarningText->SetText(FText::FromString(""));
 
 	TPair<int32, UImage*>& CurrElement = WetnessDrops[CurrWetnessAmount - 1];
 	switch (CurrElement.Key)
@@ -149,6 +156,7 @@ float UPlayerWidget::RemoveWetness()
 		else
 		{
 			RemoveHealth();
+			WarningText->SetText(FText::FromString("Drying Out"));
 		}
 		break;
 	}
