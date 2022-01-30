@@ -85,7 +85,7 @@ void UPlayerWidget::RemoveHealth()
 		}
 		else
 		{
-			//you the player died
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_01_Outside")));
 		}
 		break;
 	}

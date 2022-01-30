@@ -22,14 +22,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Start;
 	UPROPERTY(meta = (BindWidget))
-	UButton* Button_Settings_Levels;
-	UPROPERTY(meta = (BindWidget))
 	UButton* Button_Quit;
 
 	UFUNCTION()
 	void OnStartButtonPressed();
-	UFUNCTION()
-	void OnSettingsButtonPressed();
 	UFUNCTION()
 	void OnQuitButtonPressed();
 };
