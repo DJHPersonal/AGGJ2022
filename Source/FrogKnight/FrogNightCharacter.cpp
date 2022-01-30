@@ -129,7 +129,7 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 		UKismetMathLibrary::FMod(CameraAngleHorizontal + mouseDeltaX * CameraHorizontalSenstivity, 360.0f, CameraAngleHorizontal);
 		UKismetMathLibrary::FMod(CameraAngleVertical - mouseDeltaY * CameraVerticalSenstivity, 360.0f, CameraAngleVertical);
 		//CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 0.0f, 180.0f);
-		//CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
+		CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
 		float cameraAngleVerticalRadians = FMath::DegreesToRadians(90.0f - CameraAngleVertical);
 		float cameraAngleHorizontalRadians = FMath::DegreesToRadians(CameraAngleHorizontal);
 		float x = CameraDistance * FMath::Cos(cameraAngleHorizontalRadians) * FMath::Sin(cameraAngleVerticalRadians);
