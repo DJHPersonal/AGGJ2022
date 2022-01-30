@@ -106,4 +106,8 @@ private:
 
 	//timers for the reduction of the wetness
 	FTimerHandle WetnessTimer;
+	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
+		float WetnessSeconds;
+	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
+		float WetnessReturnSeconds;
 };

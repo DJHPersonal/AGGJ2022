@@ -31,6 +31,9 @@ AFrogNightCharacter::AFrogNightCharacter()
 	CameraDistance = 1000.0f;
 	CameraLowerBound = 10.0f;
 	CameraUpperBound = 40.0f;
+
+	WetnessSeconds = 1.5f;
+	WetnessReturnSeconds = 0.5f;
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +52,7 @@ void AFrogNightCharacter::BeginPlay()
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(this));
 
 	//setup the reduction timer
-	GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5, true, 5);
+	GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
 
 }
 
@@ -176,7 +179,7 @@ void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherA
 	{
 		bInWater = true;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
-		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, 0.5f, true, 0.5f);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
 
 	}
 }
@@ -187,6 +190,6 @@ void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherAct
 	{
 		bInWater = false;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
-		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5.0f, true, 5.0f);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
 	}
 }
