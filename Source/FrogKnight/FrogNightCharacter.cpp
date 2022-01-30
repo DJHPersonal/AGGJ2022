@@ -9,6 +9,7 @@
 #include "PlayerWidget.h"
 #include "TimerManager.h"
 #include "GameFramework/PlayerController.h"
+#include "Engine/TriggerBox.h"
 
 
 // Sets default values
@@ -71,6 +72,9 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	}
 	else
 		bWalking = false;
+
+	if(GetActorLocation().Z < -1050)
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_01_Outside")));
 }
 
 // Called to bind functionality to input
@@ -185,6 +189,8 @@ void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherA
 		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
 
 	}
+	if(Cast<ATriggerBox>(OtherActor))
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_02_ThroneRoom")));
 }
 
 void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
