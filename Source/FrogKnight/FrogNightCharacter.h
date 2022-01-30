@@ -40,6 +40,12 @@ public:
 		bool bInWater;
 	UPROPERTY(BlueprintReadOnly)
 		bool bWalking;
+	UFUNCTION(BlueprintImplementableEvent)
+		void BeganJump();
+	UFUNCTION(BlueprintImplementableEvent)
+		void FinishJump();
+
+	
 private:
 	UMainGameInstance* GameInstance;
 
@@ -48,6 +54,7 @@ private:
 	void Strafe(float Value);
 
 	void Jump() override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	int32 ForwardDirection;
 	float TurnSpeed;

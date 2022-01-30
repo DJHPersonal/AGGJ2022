@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/ProgressBar.h"
 #include "Components/WrapBox.h"
 #include "Components/Image.h"
 #include "MainGameInstance.h"
@@ -39,12 +38,6 @@ public:
 	virtual bool Initialize() override;
 
 private:
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ProgressBar_Wetness;
-
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ProgressBar_Health;
-
 	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Health;
 	UPROPERTY(meta = (BindWidget))
