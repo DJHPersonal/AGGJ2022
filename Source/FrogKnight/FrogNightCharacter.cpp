@@ -31,6 +31,9 @@ AFrogNightCharacter::AFrogNightCharacter()
 	CameraDistance = 1000.0f;
 	CameraLowerBound = 10.0f;
 	CameraUpperBound = 40.0f;
+
+	WetnessSeconds = 1.5f;
+	WetnessReturnSeconds = 0.5f;
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +52,7 @@ void AFrogNightCharacter::BeginPlay()
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(this));
 
 	//setup the reduction timer
-	GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5, true, 5);
+	GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
 
 }
 
@@ -59,7 +62,15 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera(DeltaTime);
-	SetOrientation(DeltaTime);
+	SetOrientation(DeltaTime, CameraActor->GetActorRotation().Yaw + 90);
+
+	//for the walk animation to run
+	if (MovementDirection.X > 0.01f || MovementDirection.X < -0.01f || MovementDirection.Y > 0.01f || MovementDirection.Y < -0.01f)
+	{
+		bWalking = true;
+	}
+	else
+		bWalking = false;
 }
 
 // Called to bind functionality to input
@@ -70,18 +81,24 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AFrogNightCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Strafe"), this, &AFrogNightCharacter::Strafe);
 
+	PlayerInputComponent->BindAction(TEXT("ZoomIn"), IE_Pressed, this, &AFrogNightCharacter::CameraZoomIn);
+	PlayerInputComponent->BindAction(TEXT("ZoomOut"), IE_Pressed, this, &AFrogNightCharacter::CameraZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFrogNightCharacter::Jump);
 }
 
 void AFrogNightCharacter::MoveForward(float Value) //setup movement so it works by orienting the character in the  direction of movement
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	FVector Forward = CameraActor->GetActorForwardVector();
+	Forward.Z = 0;
+
+	AddMovementInput(Forward, Value);
 	MovementDirection.Y = Value;
 }
 
 void AFrogNightCharacter::Strafe(float Value)
 {
-	AddMovementInput(GetActorRightVector(), Value);
+	FVector Right = CameraActor->GetActorRightVector();
+	AddMovementInput(Right, Value);
 	MovementDirection.X = Value;
 }
 
@@ -90,14 +107,16 @@ void AFrogNightCharacter::Jump()
 	Super::Jump();
 	if (bPressedJump && CanJump())
 	{
-		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
-		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
-		UE_LOG(LogTemp, Warning, TEXT("Forward Velocity: %f, %f"), GetActorForwardVector().X, GetActorForwardVector().Y)
-		/*if (GameInstance && GameInstance->PlayerWidget)
-		{
-			Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
-		}*/
+		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().X;
+		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().Y;
+		BeganJump();
 	}
+}
+
+void AFrogNightCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	FinishJump();
 }
 
 void AFrogNightCharacter::MoveCamera(float DeltaTime)
@@ -133,6 +152,17 @@ float AFrogNightCharacter::EasingIn(float Value)
 	return FMath::Pow(Value, 1.75);
 }
 
+void AFrogNightCharacter::CameraZoomOut()
+{
+	CameraDistance -= 25;
+	CameraDistance = FMath::Clamp(CameraDistance, 200.0f, 1500.0f);
+}
+void AFrogNightCharacter::CameraZoomIn()
+{
+	CameraDistance += 25;
+	CameraDistance = FMath::Clamp(CameraDistance, 200.0f, 1500.0f);
+}
+
 void AFrogNightCharacter::ReduceWetness()
 {
 	float Value = Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
@@ -150,7 +180,7 @@ void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherA
 	{
 		bInWater = true;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
-		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, 0.5f, true, 0.5f);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
 
 	}
 }
@@ -161,6 +191,6 @@ void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherAct
 	{
 		bInWater = false;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
-		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, 5.0f, true, 5.0f);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
 	}
 }

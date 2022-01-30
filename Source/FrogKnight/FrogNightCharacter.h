@@ -8,7 +8,6 @@
 #include "MainGameInstance.h"
 
 #include "FrogNightCharacter.generated.h"
-
 UCLASS()
 class FROGKNIGHT_API AFrogNightCharacter : public ACharacter
 {
@@ -33,9 +32,20 @@ public:
 	FVector MovementDirection;
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetOrientation(float DeltaTime);
+	void SetOrientation(float DeltaTime, float CameraRotation);
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerColour(float Value);
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bInWater;
+	UPROPERTY(BlueprintReadOnly)
+		bool bWalking;
+	UFUNCTION(BlueprintImplementableEvent)
+		void BeganJump();
+	UFUNCTION(BlueprintImplementableEvent)
+		void FinishJump();
+
+	
 private:
 	UMainGameInstance* GameInstance;
 
@@ -44,6 +54,7 @@ private:
 	void Strafe(float Value);
 
 	void Jump() override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	int32 ForwardDirection;
 	float TurnSpeed;
@@ -77,8 +88,9 @@ private:
 
 	float EasingIn(float Value);
 	void MoveCamera(float DeltaTime);
-	
-	bool bInWater;
+	void CameraZoomIn();
+	void CameraZoomOut();
+
 	void UpdateWetness(float UpdateValue);
 	UFUNCTION()
 	void ReduceWetness();
@@ -94,4 +106,8 @@ private:
 
 	//timers for the reduction of the wetness
 	FTimerHandle WetnessTimer;
+	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
+		float WetnessSeconds;
+	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
+		float WetnessReturnSeconds;
 };
