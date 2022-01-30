@@ -33,7 +33,7 @@ public:
 	FVector MovementDirection;
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetOrientation(float DeltaTime);
+	void SetOrientation(float DeltaTime, float CameraRotation);
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerColour(float Value);
 private:
@@ -77,7 +77,9 @@ private:
 
 	float EasingIn(float Value);
 	void MoveCamera(float DeltaTime);
-	
+	void CameraZoomIn();
+	void CameraZoomOut();
+
 	bool bInWater;
 	void UpdateWetness(float UpdateValue);
 	UFUNCTION()

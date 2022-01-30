@@ -59,7 +59,7 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	MoveCamera(DeltaTime);
-	SetOrientation(DeltaTime);
+	SetOrientation(DeltaTime, CameraActor->GetActorRotation().Euler().Z);
 }
 
 // Called to bind functionality to input
@@ -70,18 +70,24 @@ void AFrogNightCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AFrogNightCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("Strafe"), this, &AFrogNightCharacter::Strafe);
 
+	PlayerInputComponent->BindAction(TEXT("ZoomIn"), IE_Pressed, this, &AFrogNightCharacter::CameraZoomIn);
+	PlayerInputComponent->BindAction(TEXT("ZoomOut"), IE_Pressed, this, &AFrogNightCharacter::CameraZoomOut);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AFrogNightCharacter::Jump);
 }
 
 void AFrogNightCharacter::MoveForward(float Value) //setup movement so it works by orienting the character in the  direction of movement
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	FVector Forward = CameraActor->GetActorForwardVector();
+	Forward.Z = 0;
+
+	AddMovementInput(Forward, Value);
 	MovementDirection.Y = Value;
 }
 
 void AFrogNightCharacter::Strafe(float Value)
 {
-	AddMovementInput(GetActorRightVector(), Value);
+	FVector Right = CameraActor->GetActorRightVector();
+	AddMovementInput(Right, Value);
 	MovementDirection.X = Value;
 }
 
@@ -90,13 +96,8 @@ void AFrogNightCharacter::Jump()
 	Super::Jump();
 	if (bPressedJump && CanJump())
 	{
-		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
-		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
-		UE_LOG(LogTemp, Warning, TEXT("Forward Velocity: %f, %f"), GetActorForwardVector().X, GetActorForwardVector().Y)
-		/*if (GameInstance && GameInstance->PlayerWidget)
-		{
-			Cast<UPlayerWidget>(GameInstance->PlayerWidget)->RemoveWetness();
-		}*/
+		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().X;
+		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().Y;
 	}
 }
 
@@ -130,6 +131,17 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 float AFrogNightCharacter::EasingIn(float Value)
 {
 	return FMath::Pow(Value, 1.75);
+}
+
+void AFrogNightCharacter::CameraZoomOut()
+{
+	CameraDistance -= 25;
+	CameraDistance = FMath::Clamp(CameraDistance, 200.0f, 1500.0f);
+}
+void AFrogNightCharacter::CameraZoomIn()
+{
+	CameraDistance += 25;
+	CameraDistance = FMath::Clamp(CameraDistance, 200.0f, 1500.0f);
 }
 
 void AFrogNightCharacter::ReduceWetness()
