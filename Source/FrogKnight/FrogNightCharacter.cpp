@@ -60,6 +60,14 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 
 	MoveCamera(DeltaTime);
 	SetOrientation(DeltaTime, CameraActor->GetActorRotation().Euler().Z);
+
+	//for the walk animation to run
+	if (MovementDirection.X > 0.01f || MovementDirection.X < -0.01f || MovementDirection.Y > 0.01f || MovementDirection.Y < -0.01f)
+	{
+		bWalking = true;
+	}
+	else
+		bWalking = false;
 }
 
 // Called to bind functionality to input
@@ -88,7 +96,7 @@ void AFrogNightCharacter::Strafe(float Value)
 {
 	FVector Right = CameraActor->GetActorRightVector();
 	AddMovementInput(Right, Value);
-	MovementDirection.X = Value;
+	MovementDirection.X = -Value;
 }
 
 void AFrogNightCharacter::Jump()

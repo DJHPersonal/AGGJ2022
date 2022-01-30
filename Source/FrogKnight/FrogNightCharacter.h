@@ -8,7 +8,6 @@
 #include "MainGameInstance.h"
 
 #include "FrogNightCharacter.generated.h"
-
 UCLASS()
 class FROGKNIGHT_API AFrogNightCharacter : public ACharacter
 {
@@ -36,6 +35,11 @@ public:
 	void SetOrientation(float DeltaTime, float CameraRotation);
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerColour(float Value);
+
+	UPROPERTY(BlueprintReadOnly)
+		bool bInWater;
+	UPROPERTY(BlueprintReadOnly)
+		bool bWalking;
 private:
 	UMainGameInstance* GameInstance;
 
@@ -80,7 +84,6 @@ private:
 	void CameraZoomIn();
 	void CameraZoomOut();
 
-	bool bInWater;
 	void UpdateWetness(float UpdateValue);
 	UFUNCTION()
 	void ReduceWetness();
