@@ -56,6 +56,7 @@ private:
 	void Jump() override;
 	virtual void Landed(const FHitResult& Hit) override;
 
+
 	int32 ForwardDirection;
 	float TurnSpeed;
 	float MaxMoveSpeed;
@@ -91,18 +92,17 @@ private:
 	void CameraZoomIn();
 	void CameraZoomOut();
 
-	void UpdateWetness(float UpdateValue);
 	UFUNCTION()
 	void ReduceWetness();
 	UFUNCTION()
 	void AddWetness();
-	void UpdateHealth(float UpdateValue);
 
-	//collision detection
+	//Detection for in water
+	void DetectWater();
 	UFUNCTION()
 	void BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor); 
-	UFUNCTION()
-	void EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor);
+	/*UFUNCTION()
+	void EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor);*/
 
 	//timers for the reduction of the wetness
 	FTimerHandle WetnessTimer;

@@ -48,7 +48,7 @@ void AFrogNightCharacter::BeginPlay()
 	}
 
 	OnActorBeginOverlap.AddDynamic(this, &AFrogNightCharacter::BeginOverlap);
-	OnActorEndOverlap.AddDynamic(this, &AFrogNightCharacter::EndOverlap);
+	//OnActorEndOverlap.AddDynamic(this, &AFrogNightCharacter::EndOverlap);
 
 	GameInstance = Cast<UMainGameInstance>(UGameplayStatics::GetGameInstance(this));
 
@@ -64,7 +64,7 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 
 	MoveCamera(DeltaTime);
 	SetOrientation(DeltaTime, CameraActor->GetActorRotation().Yaw + 90);
-
+	DetectWater();
 	//for the walk animation to run
 	if (MovementDirection.X > 0.01f || MovementDirection.X < -0.01f || MovementDirection.Y > 0.01f || MovementDirection.Y < -0.01f)
 	{
@@ -180,25 +180,41 @@ void AFrogNightCharacter::AddWetness()
 	PlayerColour(1 - Value);
 }
 
-void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+void AFrogNightCharacter::DetectWater()
 {
-	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+	if (GetActorLocation().Z < 135 && !bInWater)
 	{
 		bInWater = true;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
 		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
-
 	}
-	if(Cast<ATriggerBox>(OtherActor))
-		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_02_ThroneRoom")));
-}
-
-void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
-{
-	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+	else if (bInWater && GetActorLocation().Z > 135)
 	{
 		bInWater = false;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
 		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
 	}
 }
+
+void AFrogNightCharacter::BeginOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+{/*
+	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+	{
+		bInWater = true;
+		GetWorldTimerManager().ClearTimer(WetnessTimer);
+		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
+
+	}*/
+	if(Cast<ATriggerBox>(OtherActor))
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_02_ThroneRoom")));
+}
+//
+//void AFrogNightCharacter::EndOverlap(AActor* MyOverlappedActor, AActor* OtherActor)
+//{
+//	if (OtherActor->GetName() == FString(TEXT("TestWater")))
+//	{
+//		bInWater = false;
+//		GetWorldTimerManager().ClearTimer(WetnessTimer);
+//		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::ReduceWetness, WetnessSeconds, true, WetnessSeconds);
+//	}
+//}
