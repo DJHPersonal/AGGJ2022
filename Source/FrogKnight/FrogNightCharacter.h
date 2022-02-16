@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraActor.h"
 #include "MainGameInstance.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #include "FrogNightCharacter.generated.h"
 UCLASS()
@@ -92,6 +93,7 @@ private:
 	void CameraZoomIn();
 	void CameraZoomOut();
 
+	float WaterHeight;
 	UFUNCTION()
 	void ReduceWetness();
 	UFUNCTION()
@@ -110,4 +112,7 @@ private:
 		float WetnessSeconds;
 	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
 		float WetnessReturnSeconds;
+
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* CharacterMesh;
 };

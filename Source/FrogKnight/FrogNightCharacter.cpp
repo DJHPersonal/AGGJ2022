@@ -35,13 +35,13 @@ AFrogNightCharacter::AFrogNightCharacter()
 
 	WetnessSeconds = 1.5f;
 	WetnessReturnSeconds = 0.5f;
+	WaterHeight = 135;
 }
 
 // Called when the game starts or when spawned
 void AFrogNightCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//CameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));//FindComponentByClass<ACameraActor>();
 	if (CameraActor)
 	{
 		CameraActor->SetActorRotation(CameraInitalRotation);
@@ -73,7 +73,7 @@ void AFrogNightCharacter::Tick(float DeltaTime)
 	else
 		bWalking = false;
 
-	if(GetActorLocation().Z < -1050)
+	if(GetActorLocation().Z < -1550)
 		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("LVL_01_Outside")));
 }
 
@@ -111,8 +111,8 @@ void AFrogNightCharacter::Jump()
 	Super::Jump();
 	if (bPressedJump && CanJump())
 	{
-		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().X;
-		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * CameraActor->GetActorForwardVector().Y;
+		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
+		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
 		BeganJump();
 	}
 }
@@ -132,10 +132,10 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetInputMouseDelta(mouseDeltaX, mouseDeltaY);
 		UKismetMathLibrary::FMod(CameraAngleHorizontal + mouseDeltaX * CameraHorizontalSenstivity, 360.0f, CameraAngleHorizontal);
 		UKismetMathLibrary::FMod(CameraAngleVertical - mouseDeltaY * CameraVerticalSenstivity, 360.0f, CameraAngleVertical);
-		CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 90.0f - 90.0f, 270.0f - 90.0f);
+
+		CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 90.0f - 90.0f, 360.0f - 90.0f);
 		CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
-		//CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 0.0f, 180.0f);
-		CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
+
 		float cameraAngleVerticalRadians = FMath::DegreesToRadians(90.0f - CameraAngleVertical);
 		float cameraAngleHorizontalRadians = FMath::DegreesToRadians(CameraAngleHorizontal);
 		float x = CameraDistance * FMath::Cos(cameraAngleHorizontalRadians) * FMath::Sin(cameraAngleVerticalRadians);
@@ -149,6 +149,8 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 		FVector DirectionFromCamera = UKismetMathLibrary::Normal(DesiredLocation - CameraActor->GetActorLocation(), 1);
 		float Distance = FVector::Dist(DesiredLocation, CameraLocation) / 100;
 		CameraActor->SetActorLocation(CameraLocation + DirectionFromCamera * DeltaTime * EasingIn(Distance) * CameraMoveSpeed);
+
+		CameraActor->SetActorLocation(FVector(CameraActor->GetActorLocation().X, CameraActor->GetActorLocation().Y, FMath::Clamp(CameraActor->GetActorLocation().Z, WaterHeight, 1000000.0f)));
 		CameraActor->SetActorRotation((GetActorLocation() - CameraActor->GetActorLocation()).Rotation());
 	}
 }
@@ -182,13 +184,13 @@ void AFrogNightCharacter::AddWetness()
 
 void AFrogNightCharacter::DetectWater()
 {
-	if (GetActorLocation().Z < 135 && !bInWater)
+	if (GetActorLocation().Z < WaterHeight && !bInWater)
 	{
 		bInWater = true;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
 		GetWorldTimerManager().SetTimer(WetnessTimer, this, &AFrogNightCharacter::AddWetness, WetnessReturnSeconds, true, WetnessReturnSeconds);
 	}
-	else if (bInWater && GetActorLocation().Z > 135)
+	else if (bInWater && GetActorLocation().Z >= WaterHeight)
 	{
 		bInWater = false;
 		GetWorldTimerManager().ClearTimer(WetnessTimer);
