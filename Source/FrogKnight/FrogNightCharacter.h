@@ -46,7 +46,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 		void FinishJump();
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* CharacterMesh;
 private:
 	UMainGameInstance* GameInstance;
 
@@ -112,7 +113,4 @@ private:
 		float WetnessSeconds;
 	UPROPERTY(EditAnywhere, Category = "Wetness Stats")
 		float WetnessReturnSeconds;
-
-	UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* CharacterMesh;
 };

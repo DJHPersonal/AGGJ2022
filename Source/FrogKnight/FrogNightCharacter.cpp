@@ -111,8 +111,11 @@ void AFrogNightCharacter::Jump()
 	Super::Jump();
 	if (bPressedJump && CanJump())
 	{
-		GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().X;
-		GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * GetActorForwardVector().Y;
+		if (CharacterMesh)
+		{
+			GetCharacterMovement()->Velocity.X += FMath::Max(GetCharacterMovement()->Velocity.X, GetCharacterMovement()->JumpZVelocity / 2) * -CharacterMesh->GetRightVector().X;
+			GetCharacterMovement()->Velocity.Y += FMath::Max(GetCharacterMovement()->Velocity.Y, GetCharacterMovement()->JumpZVelocity / 2) * -CharacterMesh->GetRightVector().Y;
+		}
 		BeganJump();
 	}
 }
@@ -133,7 +136,7 @@ void AFrogNightCharacter::MoveCamera(float DeltaTime)
 		UKismetMathLibrary::FMod(CameraAngleHorizontal + mouseDeltaX * CameraHorizontalSenstivity, 360.0f, CameraAngleHorizontal);
 		UKismetMathLibrary::FMod(CameraAngleVertical - mouseDeltaY * CameraVerticalSenstivity, 360.0f, CameraAngleVertical);
 
-		CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 90.0f - 90.0f, 360.0f - 90.0f);
+		//CameraAngleHorizontal = FMath::Clamp(CameraAngleHorizontal, 90.0f - 90.0f, 360.0f - 90.0f);
 		CameraAngleVertical = FMath::Clamp(CameraAngleVertical, CameraLowerBound, CameraUpperBound);
 
 		float cameraAngleVerticalRadians = FMath::DegreesToRadians(90.0f - CameraAngleVertical);
